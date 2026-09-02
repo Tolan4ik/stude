@@ -71,5 +71,6 @@ func main() {
 	fmt.Println("Успех! Число равно:", num)
 	buksagain := strconv.Itoa(num)
 	fmt.Println(buksagain)
-	// Мой первый код в экспериментальной ветке!
+	// Мой первый код в экспериментальной ветке!git
+	//письки сиськи
 }
