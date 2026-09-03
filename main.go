@@ -65,7 +65,7 @@ func main() {
 	if err != nil {
 		fmt.Println("Упс! Не удалось перевести в число.")
 		fmt.Println("Вот что говорит компьютер:", err)
-		return // Останавливаем программу, дальше идти нет смысла
+		// Останавливаем программу, дальше идти нет смысла
 	}
 
 	// Этот код не выполнится, так как программа зайдёт в блок if выше
@@ -90,6 +90,12 @@ func main() {
 
 	}
 	fmt.Println(numy)
+
+	fmt.Println("Повар начил готовить")
+	defer fmt.Println("Повар помыл руки в конце смены")
+	defer fmt.Println("Положили нижнюю булочку")
+	defer fmt.Println("Положили сочную котлету")
+	fmt.Println("Повар закончил сборку, заказ готов!")
 
 	password := "Super$Sec%ret"
 
@@ -158,6 +164,10 @@ func main() {
 		fmt.Println("Это что там за трилиардер")
 	}
 
+	testScore := 10
+	finalGrade := grade(testScore)
+	fmt.Println("Оценка за баллы:", finalGrade)
+
 	fmt.Println("\n--- Старт программы ---")
 
 	// 1. Вызываем функцию и создаем переменную err, куда прилетит результат.
@@ -190,4 +200,17 @@ func checkTemperature(temp int) error {
 	// Этот nil точно так же полетит в main() в переменную err.
 	return nil
 
+}
+
+func grade(testScore int) string {
+	switch {
+	case testScore >= 90:
+		return "A"
+	case testScore >= 80:
+		return "B"
+	case testScore >= 70:
+		return "C"
+	default:
+		return "D"
+	}
 }
