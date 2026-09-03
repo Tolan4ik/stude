@@ -168,6 +168,9 @@ func main() {
 	finalGrade := grade(testScore)
 	fmt.Println("Оценка за баллы:", finalGrade)
 
+	rub := 5000
+	finalrub := exchange(rub)
+	fmt.Println("Ваш пакет", finalrub)
 	fmt.Println("\n--- Старт программы ---")
 
 	// 1. Вызываем функцию и создаем переменную err, куда прилетит результат.
@@ -200,6 +203,17 @@ func checkTemperature(temp int) error {
 	// Этот nil точно так же полетит в main() в переменную err.
 	return nil
 
+}
+
+func exchange(rub int) string {
+	switch {
+	case rub < 1000:
+		return "Пакет: Базовый (высокая комиссия)"
+	case rub >= 1000 && rub <= 10000:
+		return "Пакет: Серебряный (стандартная комиссия)"
+	default:
+		return "Пакет: Золотой (без комиссии!)"
+	}
 }
 
 func grade(testScore int) string {
