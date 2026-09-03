@@ -112,6 +112,19 @@ func main() {
 	}
 	fmt.Println("\nСканирование текста завершено")
 
+	role := "admin"
+
+	switch role {
+	case "user":
+		fmt.Println("Нет доступа")
+	case "moderator":
+		fmt.Println("Ограниченый доступ")
+	case "admin":
+		fmt.Println("Полный доступ")
+	default:
+		fmt.Println("Неизвестная роль")
+	}
+
 	numbers := []int{10, 20, 30, 40, 50, 60, 70}
 
 	total := len(numbers)
