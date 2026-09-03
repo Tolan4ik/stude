@@ -91,6 +91,16 @@ func main() {
 	}
 	fmt.Println(numy)
 
+	password := "Super$Sec%ret"
+
+	for _, run := range password {
+		if run == '$' || run == '%' {
+			fmt.Println("Найден запрещенный символ!")
+			break
+		}
+
+	}
+	fmt.Println("изи проверочка")
 	fmt.Println("--- Старт программы ---")
 
 	// 1. Вызываем функцию и создаем переменную err, куда прилетит результат.
