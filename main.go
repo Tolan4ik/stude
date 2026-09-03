@@ -112,6 +112,17 @@ func main() {
 	}
 	fmt.Println("\nСканирование текста завершено")
 
+	score := 78
+
+	switch {
+	case score < 50:
+		fmt.Println("Не зачтено")
+	case score >= 50 && score < 86:
+		fmt.Println("Хорший результат")
+	default:
+		fmt.Println("Отличный результат, супер!")
+	}
+
 	role := "admin"
 
 	switch role {
@@ -130,6 +141,21 @@ func main() {
 	total := len(numbers)
 	if total > 5 {
 		fmt.Printf("В срезе много элементов! Их там: %d", total)
+	}
+
+	money := 4500
+
+	switch {
+	case money == 0:
+		fmt.Println("Значит ты Толян")
+	case money == 500:
+		fmt.Println("Ну это ты уже покушать можешь")
+	case money > 2500 && money < 3500:
+		fmt.Println("Это уже можно снимать видио выживаю неделю")
+	case money > 3500:
+		fmt.Println("\nПокупаем раки с пивом")
+	default:
+		fmt.Println("Это что там за трилиардер")
 	}
 
 	fmt.Println("\n--- Старт программы ---")
