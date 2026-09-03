@@ -3,16 +3,34 @@ package main
 import (
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"unicode/utf8"
 )
 
 func main() {
+
+	f, erer := os.Create("супер пупер секретный файл")
+	if erer != nil {
+		fmt.Printf("Не удалось создать файл: %v\n", erer)
+		return
+	}
+
+	defer f.Close()
+
+	textOs := "я что вообще только что сделал аж целый файл создал с помощью вскода ёмаё"
+	_, erer = f.WriteString(textOs)
+	if erer != nil {
+		fmt.Printf("Ошибка при записи: %v\n", erer)
+		return
+	}
+	fmt.Println("Файл 'супер пупер секретный файл' успешно создан и в него записан текст!")
+
 	a := 2
 	b := 10
 	c := 4
 	d := 6
-	f := 9.0
+	fe := 9.0
 	e := 5.0
 	fmt.Println(a + b)
 	fmt.Println(b - a)
@@ -20,7 +38,7 @@ func main() {
 	fmt.Println(b / a)
 	fmt.Println(d / c)
 	fmt.Println(d % c)
-	fmt.Println(f / e)
+	fmt.Println(fe / e)
 	j := "Привет"
 	fmt.Println(j)
 	fmt.Println(len(j))
@@ -118,15 +136,29 @@ func main() {
 	}
 	fmt.Println("\nСканирование текста завершено")
 
+	for i := 1; i <= 20; i++ {
+		if i%2 == 0 {
+			continue
+		}
+		fmt.Printf("%d", i)
+	}
+
 	score := 78
 
 	switch {
 	case score < 50:
 		fmt.Println("Не зачтено")
 	case score >= 50 && score < 86:
-		fmt.Println("Хорший результат")
+		fmt.Println("\nХорший результат")
 	default:
 		fmt.Println("Отличный результат, супер!")
+	}
+
+	for i := 1; i <= 100; i++ {
+		if i%2 != 0 {
+			continue
+		}
+		fmt.Printf("%d", i)
 	}
 
 	role := "admin"
@@ -137,7 +169,7 @@ func main() {
 	case "moderator":
 		fmt.Println("Ограниченый доступ")
 	case "admin":
-		fmt.Println("Полный доступ")
+		fmt.Println("\nПолный доступ")
 	default:
 		fmt.Println("Неизвестная роль")
 	}
