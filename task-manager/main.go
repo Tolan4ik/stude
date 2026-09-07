@@ -44,6 +44,20 @@ func FindTaskIndex(tasks []Task, id int) (int, error) {
 
 }
 
+func GetStats(tasks []Task) (total, completed, pending int) {
+	total = len(tasks)
+	for _, task := range tasks {
+		if task.IsDone() {
+			completed++
+		} else {
+			pending++
+		}
+
+	}
+	return
+
+}
+
 func (t Task) Print() {
 	fmt.Println("Номер задачи:", t.id)
 	fmt.Println("Задача:", t.name)
@@ -82,7 +96,8 @@ func main() {
 		fmt.Println("3. Изменить статус")
 		fmt.Println("4. Удалить задачу")
 		fmt.Println("5. Переименовать задачу")
-		fmt.Println("6. Выход")
+		fmt.Println("6. Показать статистику")
+		fmt.Println("7. Выход")
 		fmt.Print("Выберите действие: ")
 		fmt.Scan(&choice)
 		reader.ReadString('\n')
@@ -165,8 +180,13 @@ func main() {
 			tasks[i].Rename(name)
 
 			fmt.Println("Название изменено!")
-
 		case 6:
+			total, completed, pending := GetStats(tasks)
+			fmt.Printf("Всего:%d", total)
+			fmt.Printf("\nВыполненых:%d", completed)
+			fmt.Printf("\nВ процессе:%d\n", pending)
+
+		case 7:
 			fmt.Println("Выход из программы...")
 			return
 		}
