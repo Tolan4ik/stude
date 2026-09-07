@@ -58,6 +58,17 @@ func GetStats(tasks []Task) (total, completed, pending int) {
 
 }
 
+func FilterTasks(tasks []Task, predicate func(Task) bool) []Task {
+	var result []Task
+	for _, task := range tasks {
+		if predicate(task) {
+			result = append(result, task)
+		}
+
+	}
+	return result
+}
+
 func (t Task) Print() {
 	fmt.Println("Номер задачи:", t.id)
 	fmt.Println("Задача:", t.name)
@@ -127,7 +138,30 @@ func main() {
 				fmt.Println()
 				break
 			}
-			for _, task := range tasks {
+
+			var filterChoice int
+			fmt.Println("1. Все задачи")
+			fmt.Println("2. Только невыполненные")
+			fmt.Println("3. Только выполненные")
+			fmt.Print("Выберите фильтр: ")
+			fmt.Scan(&filterChoice)
+
+			var filtered []Task
+
+			switch filterChoice {
+
+			case 1:
+				filtered = FilterTasks(tasks, func(t Task) bool { return true })
+			case 2:
+				filtered = FilterTasks(tasks, func(t Task) bool { return !t.IsDone() })
+			case 3:
+				filtered = FilterTasks(tasks, func(t Task) bool { return t.IsDone() })
+			default:
+				fmt.Println("Неверный пункт")
+
+			}
+
+			for _, task := range filtered {
 				task.Print()
 			}
 
