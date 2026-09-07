@@ -21,12 +21,16 @@ func (t *Task) SetID(id int) {
 	t.id = id
 }
 
-func NewTask(id int, name string) Task {
+func NewTask(id int, name string) (Task, error) {
+	if name == "" {
+		return Task{}, fmt.Errorf("название не может быть пустым")
+	}
+
 	return Task{
 		id:   id,
 		name: name,
 		done: false,
-	}
+	}, nil
 }
 
 func (t Task) Print() {
@@ -82,9 +86,14 @@ func main() {
 			name, _ = reader.ReadString('\n')
 			name = strings.TrimSpace(name)
 
-			task := NewTask(len(tasks)+1, name)
-			tasks = append(tasks, task)
+			task, err := NewTask(len(tasks)+1, name)
+			if err != nil {
+				fmt.Println("Поле не может быть пустым", err)
+				break
+			}
 			fmt.Println("Задача добавлена!")
+			tasks = append(tasks, task)
+
 		case 2:
 
 			if len(tasks) == 0 {
