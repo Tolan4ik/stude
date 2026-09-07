@@ -33,6 +33,17 @@ func NewTask(id int, name string) (Task, error) {
 	}, nil
 }
 
+func FindTaskIndex(tasks []Task, id int) (int, error) {
+	for i, task := range tasks {
+		if task.id == id {
+			return i, nil
+		}
+	}
+
+	return -1, fmt.Errorf("задача с таким номером не найдена")
+
+}
+
 func (t Task) Print() {
 	fmt.Println("Номер задачи:", t.id)
 	fmt.Println("Задача:", t.name)
@@ -109,40 +120,31 @@ func main() {
 			var id int
 			fmt.Println("Введите номер задачи")
 			fmt.Scan(&id)
-			found := false
-			for i := range tasks {
-				if tasks[i].id == id {
-					tasks[i].Toggle()
-					found = true
-					fmt.Println("Статус изменён!")
-					break
-				}
-
+			i, err := FindTaskIndex(tasks, id)
+			if err != nil {
+				fmt.Println(err)
+				break
 			}
-			if !found {
-				fmt.Println("Такой задачи нет")
-			}
+			tasks[i].Toggle()
+			fmt.Println("Статус изменён!")
 
 		case 4:
 			var id int
 			fmt.Println("Введите номер задачи для удаления:")
 			fmt.Scan(&id)
-			found := false
-			for i := range tasks {
-				if tasks[i].id == id {
-					tasks = append(tasks[:i], tasks[i+1:]...)
-					for i := range tasks {
-						tasks[i].SetID(i + 1)
-					}
-					found = true
-					fmt.Println("Задача удалена!")
-					break
-				}
 
+			i, err := FindTaskIndex(tasks, id)
+			if err != nil {
+				fmt.Println(err)
+				break
 			}
-			if !found {
-				fmt.Println("Такой задачи нет")
+
+			tasks = append(tasks[:i], tasks[i+1:]...)
+			for i := range tasks {
+				tasks[i].SetID(i + 1)
 			}
+
+			fmt.Println("Задача удалена!")
 
 		case 5:
 			var id int
@@ -150,27 +152,19 @@ func main() {
 			fmt.Println("Введите номер задачи для переименования:")
 			fmt.Scan(&id)
 			reader.ReadString('\n')
-
-			found := false
-
-			for i := range tasks {
-				if tasks[i].id == id {
-
-					fmt.Println("Введите новое название:")
-					name, _ := reader.ReadString('\n')
-					name = strings.TrimSpace(name)
-
-					tasks[i].Rename(name)
-
-					found = true
-					fmt.Println("Название изменено!")
-					break
-				}
+			i, err := FindTaskIndex(tasks, id)
+			if err != nil {
+				fmt.Println(err)
+				break
 			}
 
-			if !found {
-				fmt.Println("Такой задачи нет")
-			}
+			fmt.Println("Введите новое название:")
+			name, _ := reader.ReadString('\n')
+			name = strings.TrimSpace(name)
+
+			tasks[i].Rename(name)
+
+			fmt.Println("Название изменено!")
 
 		case 6:
 			fmt.Println("Выход из программы...")
