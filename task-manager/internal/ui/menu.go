@@ -51,6 +51,70 @@ func promptShowTasks(reader *bufio.Reader, s storage.Storage) {
 	}
 }
 
+func handleTaskAction(reader *bufio.Reader, s storage.Storage, id int) {
+	t, err := s.Get(id)
+	if err != nil {
+		PrintError(err)
+		waitEnter(reader)
+		return
+	}
+
+	for {
+		clearScreen()
+		fmt.Printf("%s%s=== ДЕЙСТВИЯ НАД ЗАДАЧЕЙ ===%s\n\n", Bold, Cyan, Reset)
+		fmt.Printf("Выбрана задача: %s\n\n", t)
+		fmt.Println("1. Переключить статус")
+		fmt.Println("2. Переименовать")
+		fmt.Println("3. Удалить")
+		fmt.Println("0. Назад к списку")
+		fmt.Println()
+
+		action, err := readInt(reader, "Выберите действие (0-3): ")
+		if err != nil {
+			PrintWarning("Пожалуйста, введите число от 0 до 3")
+			waitEnter(reader)
+			continue
+		}
+
+		switch action {
+		case 1:
+			if err := s.Toggle(id); err != nil {
+				PrintError(err)
+			} else {
+				PrintSuccess("Статус изменён!")
+			}
+			waitEnter(reader)
+			return // сразу возвращаемся к списку задач
+
+		case 2:
+			name := readLine(reader, "Введите новое название: ")
+			if err := s.Rename(id, name); err != nil {
+				PrintError(err)
+			} else {
+				PrintSuccess("Задача переименована!")
+			}
+			waitEnter(reader)
+			return // сразу возвращаемся к списку задач
+
+		case 3:
+			if err := s.Delete(id); err != nil {
+				PrintError(err)
+			} else {
+				PrintSuccess("Задача успешно удалена!")
+			}
+			waitEnter(reader)
+			return // сразу возвращаемся к списку задач
+
+		case 0:
+			return // просто назад к списку задач
+
+		default:
+			PrintWarning("Неверный пункт, выберите от 0 до 3")
+			waitEnter(reader)
+		}
+	}
+}
+
 func Run(s storage.Storage) {
 	reader := bufio.NewReader(os.Stdin)
 
@@ -75,34 +139,19 @@ func Run(s storage.Storage) {
 
 		switch choice {
 		case 1:
-			tasks := s.List()
-			if len(tasks) == 0 {
-				PrintInfo("Список задач пуст.")
-				waitEnter(reader)
-				continue
-			}
+			filterChoice := 1 // по умолчанию показываем все задачи
 
 			for {
-				clearScreen()
-				fmt.Printf("%s%s=== ПРОСМОТР ЗАДАЧ ===%s\n\n", Bold, Cyan, Reset)
-				fmt.Println("1. Все задачи")
-				fmt.Println("2. Только невыполненные")
-				fmt.Println("3. Только выполненные")
-				fmt.Println("0. Назад в главное меню")
-				fmt.Println()
-
-				filterChoice, err := readInt(reader, "Выберите фильтр (0-3): ")
-				if err != nil {
-					PrintWarning("Некорректный выбор фильтра")
+				tasks := s.List()
+				if len(tasks) == 0 {
+					PrintInfo("Список задач пуст.")
 					waitEnter(reader)
-					continue
+					break
 				}
 
-				if filterChoice == 0 {
-					break // уходим в главное меню
-				}
+				clearScreen()
+				fmt.Printf("%s%s=== ВАШИ ЗАДАЧИ ===%s\n\n", Bold, Cyan, Reset)
 
-				fmt.Printf("\n%s--- Список задач ---%s\n", Bold, Reset)
 				for _, t := range tasks {
 					switch filterChoice {
 					case 1:
@@ -120,12 +169,36 @@ func Run(s storage.Storage) {
 					}
 				}
 
-				// ВОТ ЗДЕСЬ НАШ ВЫБОР НАВИГАЦИИ:
-				fmt.Printf("\n%s👉 [1] Выбрать другой фильтр | [Enter] Главное меню: %s", Cyan, Reset)
-				navChoice := readLine(reader, "")
-				if navChoice != "1" {
-					break // если не 1, выходим в главное меню
+				fmt.Printf("\n%s👉 Номер задачи для действий | [F] Фильтры | [Enter] Меню: %s", Cyan, Reset)
+				input := readLine(reader, "")
+
+				// Если просто Enter — уходим в главное меню
+				if input == "" {
+					break
 				}
+
+				// Если ввели F — меняем фильтр
+				if strings.ToLower(input) == "f" {
+					fmt.Println("\n1. Все задачи")
+					fmt.Println("2. Только невыполненные")
+					fmt.Println("3. Только выполненные")
+					fChoice, err := readInt(reader, "Выберите фильтр (1-3): ")
+					if err == nil && fChoice >= 1 && fChoice <= 3 {
+						filterChoice = fChoice
+					}
+					continue
+				}
+
+				// Если ввели число — это номер задачи!
+				taskID, err := strconv.Atoi(input)
+				if err != nil {
+					PrintWarning("Неверный ввод (введите номер задачи, F или Enter)")
+					waitEnter(reader)
+					continue
+				}
+
+				// Запускаем действия над выбранной задачей!
+				handleTaskAction(reader, s, taskID)
 			}
 
 		case 2:
