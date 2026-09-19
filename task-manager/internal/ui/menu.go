@@ -126,18 +126,15 @@ func Run(s storage.Storage) {
 	for {
 		clearScreen()
 		fmt.Printf("%s%s=== МЕНЕДЖЕР ЗАДАЧ ===%s\n\n", Bold, Cyan, Reset)
-		fmt.Println("1. Показать задачи")
+		fmt.Println("1. Мои задачи")
 		fmt.Println("2. Добавить задачу")
-		fmt.Println("3. Переключить статус")
-		fmt.Println("4. Переименовать задачу")
-		fmt.Println("5. Удалить задачу")
-		fmt.Println("6. Статистика")
-		fmt.Println("7. Выход")
+		fmt.Println("3. Статистика")
+		fmt.Println("4. Выход")
 		fmt.Println()
 
-		choice, err := readInt(reader, "Выберите действие (1-7): ")
+		choice, err := readInt(reader, "Выберите действие (1-4): ")
 		if err != nil {
-			PrintWarning("Пожалуйста, введите число от 1 до 7")
+			PrintWarning("Пожалуйста, введите число от 1 до 4")
 			waitEnter(reader)
 			continue
 		}
@@ -224,90 +221,6 @@ func Run(s storage.Storage) {
 			promptShowTasks(reader, s)
 
 		case 3:
-			tasks := s.List()
-			if len(tasks) == 0 {
-				PrintInfo("Список задач пуст.")
-				waitEnter(reader)
-				continue
-			}
-
-			printTasks(tasks) // 👈 ВОТ ОНО: выводим задачи перед глазами!
-			id, err := readInt(reader, "\nВведите номер задачи для изменения статуса (или 0 для отмены): ")
-			if err != nil {
-				PrintWarning("Некорректный номер задачи")
-				waitEnter(reader)
-				continue
-			}
-			if id == 0 {
-				continue
-			}
-			if err := s.Toggle(id); err != nil {
-				PrintError(err)
-				waitEnter(reader)
-				continue
-			}
-			PrintSuccess("Статус задачи изменён!")
-			promptShowTasks(reader, s)
-
-		case 4:
-			tasks := s.List()
-			if len(tasks) == 0 {
-				PrintInfo("Список задач пуст.")
-				waitEnter(reader)
-				continue
-			}
-
-			printTasks(tasks)
-			id, err := readInt(reader, "\nВведите номер задачи для изменения названия (или 0 для отмены): ")
-			if err != nil {
-				PrintWarning("Некорректный номер задачи")
-				waitEnter(reader)
-				continue
-			}
-			if id == 0 {
-				continue
-			}
-			name := readLine(reader, "Введите новое название (или Enter для отмены): ")
-			if name == "" {
-				PrintInfo("Переименование отменено.")
-				waitEnter(reader)
-				continue // просто возвращаемся в меню
-			}
-			if err := s.Rename(id, name); err != nil {
-				PrintError(err)
-				waitEnter(reader)
-				continue
-			}
-			PrintSuccess("Задача переименована!")
-			promptShowTasks(reader, s)
-
-		case 5:
-			tasks := s.List()
-			if len(tasks) == 0 {
-				PrintInfo("Список задач пуст.")
-				waitEnter(reader)
-				continue
-			}
-
-			printTasks(tasks)
-			id, err := readInt(reader, "\nВведите номер задачи для удаления (или 0 для отмены): ")
-			if err != nil {
-				PrintWarning("Некорректный номер задачи")
-				waitEnter(reader)
-				continue
-			}
-			if id == 0 {
-				continue
-			}
-			if err := s.Delete(id); err != nil {
-				PrintError(err)
-				waitEnter(reader)
-				continue
-			}
-			PrintSuccess("Задача успешно удалена!")
-			promptShowTasks(reader, s)
-
-		case 6:
 			total, completed, pending := s.Stats()
 			fmt.Printf("\n%s--- Статистика задач ---%s\n", Bold, Reset)
 			fmt.Printf("Всего задач:  %d\n", total)
@@ -315,12 +228,12 @@ func Run(s storage.Storage) {
 			fmt.Printf("%sВ процессе:   %d%s\n", Yellow, pending, Reset)
 			waitEnter(reader)
 
-		case 7:
+		case 4:
 			PrintInfo("До встречи!")
 			return
 
 		default:
-			PrintWarning("Неверный пункт меню, выберите от 1 до 7")
+			PrintWarning("Неверный пункт меню, выберите от 1 до 4")
 			waitEnter(reader)
 		}
 	}
