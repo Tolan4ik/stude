@@ -207,7 +207,13 @@ func Run(s storage.Storage) {
 			}
 
 		case 2:
-			name := readLine(reader, "Введите название задачи: ")
+			name := readLine(reader, "Введите название задачи (или Enter для отмены): ")
+			if name == "" {
+				PrintInfo("Добавление отменено.")
+				waitEnter(reader)
+				continue
+			}
+
 			t, err := s.Add(name)
 			if err != nil {
 				PrintError(err)
