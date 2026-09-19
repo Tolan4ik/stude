@@ -31,9 +31,9 @@ func (t *Task) Rename(name string) error {
 }
 
 func (t Task) String() string {
-	status := "[ ]"
+	status := "[❌ ]"
 	if t.Done {
-		status = "[✓]"
+		status = "[✅ ]"
 	}
 	return fmt.Sprintf("%d. %s %s", t.ID, status, t.Name)
 }
