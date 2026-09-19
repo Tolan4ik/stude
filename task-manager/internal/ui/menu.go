@@ -87,7 +87,12 @@ func handleTaskAction(reader *bufio.Reader, s storage.Storage, id int) {
 			return // сразу возвращаемся к списку задач
 
 		case 2:
-			name := readLine(reader, "Введите новое название: ")
+			name := readLine(reader, "Введите новое название (или Enter для отмены): ")
+			if name == "" {
+				PrintInfo("Переименование отменено.")
+				waitEnter(reader)
+				return // просто возвращаемся к списку задач
+			}
 			if err := s.Rename(id, name); err != nil {
 				PrintError(err)
 			} else {
@@ -256,7 +261,12 @@ func Run(s storage.Storage) {
 			if id == 0 {
 				continue
 			}
-			name := readLine(reader, "Введите новое название: ")
+			name := readLine(reader, "Введите новое название (или Enter для отмены): ")
+			if name == "" {
+				PrintInfo("Переименование отменено.")
+				waitEnter(reader)
+				continue // просто возвращаемся в меню
+			}
 			if err := s.Rename(id, name); err != nil {
 				PrintError(err)
 				waitEnter(reader)
